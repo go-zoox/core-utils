@@ -2,8 +2,6 @@ package object
 
 import (
 	"testing"
-
-	"github.com/go-zoox/core-utils/fmt"
 )
 
 func TestToMap(t *testing.T) {
@@ -88,7 +86,7 @@ func TestToMapNestStruct(t *testing.T) {
 		t.Errorf("Expected %d, got %d", 18, userMap["age"])
 	}
 
-	fmt.PrintJSON(userMap)
+	// fmt.PrintJSON(userMap)
 
 	if Get(userMap, "address.city") != "New York" {
 		t.Errorf("Expected %s, got %s", "New York", Get(userMap, "address.city"))
@@ -100,6 +98,9 @@ func TestToMapNestSlice(t *testing.T) {
 		Name    string   `json:"name"`
 		Age     int      `json:"age"`
 		Hobbies []string `json:"hobbies"`
+		Address struct {
+			City string `json:"city"`
+		} `json:"address"`
 	}
 
 	user := &User{
@@ -109,6 +110,11 @@ func TestToMapNestSlice(t *testing.T) {
 			"reading",
 			"coding",
 		},
+		Address: struct {
+			City string `json:"city"`
+		}{
+			City: "New York",
+		},
 	}
 
 	userMap, err := ToMap(user, "json")
@@ -116,7 +122,12 @@ func TestToMapNestSlice(t *testing.T) {
 		t.Errorf("Expected nil, got %v", err)
 	}
 
-	fmt.PrintJSON(userMap)
+	// fmt.PrintJSON(userMap)
+
+	// gofmt.Println(Get(userMap, "hobbies.0"))
+	// gofmt.Println(Get(userMap, "hobbies.1"))
+	// gofmt.Println(Get(userMap, "hobbies.2"))
+	// gofmt.Println(Get(userMap, "address.city"))
 
 	if Get(userMap, "hobbies.0") != "reading" {
 		t.Errorf("Expected %s, got %s", "reading", Get(userMap, "hobbies[0]"))
@@ -124,5 +135,13 @@ func TestToMapNestSlice(t *testing.T) {
 
 	if Get(userMap, "hobbies.1") != "coding" {
 		t.Errorf("Expected %s, got %s", "coding", Get(userMap, "hobbies[1]"))
+	}
+
+	if Get(userMap, "hobbies.2") != nil {
+		t.Errorf("Expected nil, got %s", Get(userMap, "hobbies[2]"))
+	}
+
+	if Get(userMap, "address.city") != "New York" {
+		t.Errorf("Expected %s, got %s", "New York", Get(userMap, "address.city"))
 	}
 }

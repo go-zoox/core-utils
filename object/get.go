@@ -2,6 +2,8 @@ package object
 
 import (
 	"reflect"
+	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -22,26 +24,48 @@ func Get[K comparable, V any](object map[K]V, key string) V {
 	}
 
 	keyLength := len(keys)
-	tmp := object
+	tmp := reflect.ValueOf(object).Interface()
 	for index, k := range keys {
-		// kt := reflect.ValueOf(k).Interface().(string)
-		// if ok, err := regexp.MatchString("^[0-9]+$", kt); ok && err == nil {
-		// 	ktt, _ := strconv.Atoi(kt)
-		// 	k = reflect.ValueOf(ktt).Interface().(K)
-		// }
+		// array
+		kt := reflect.ValueOf(k).Interface().(string)
+		// ttt, _ := regexp.MatchString("^[0-9]+$", kt)
+		// fmt.Println("xxx:", k, kt, ttt, tmp)
+		if ok := isNumeric(kt); ok {
+			if reflect.TypeOf(tmp).Kind() != reflect.Slice {
+				var empty V
+				return empty
+			}
 
-		// fmt.Println("xxx:", k)
-		if v, ok := tmp[k]; ok {
+			ktt, _ := strconv.Atoi(kt)
+			if ktt >= reflect.ValueOf(tmp).Len() {
+				var empty V
+				return empty
+			}
+
+			v := reflect.ValueOf(tmp).Index(ktt).Interface()
 			if index == keyLength-1 {
 				return reflect.ValueOf(v).Interface().(V)
 			}
 
-			switch reflect.ValueOf(v).Interface().(type) {
-			case map[K]V:
-				tmp = reflect.ValueOf(v).Interface().(map[K]V)
-			case []V:
-				// tmp = reflect.ValueOf(v).Interface()
+			tmp = v
+			continue
+		}
+
+		if v, ok := tmp.(map[K]V)[k]; ok {
+			if index == keyLength-1 {
+				return reflect.ValueOf(v).Interface().(V)
 			}
+
+			switch reflect.TypeOf(v).Kind() {
+			case reflect.Map:
+				tmp = reflect.ValueOf(v).Interface().(map[K]V)
+			case reflect.Slice:
+				tmp = reflect.ValueOf(v).Interface()
+			default:
+				tmp = v
+			}
+
+			// fmt.Println("key:", k, tmp)
 		} else {
 			var empty V
 			return empty
@@ -51,3 +75,9 @@ func Get[K comparable, V any](object map[K]V, key string) V {
 	var empty V
 	return empty
 }
+
+func isNumeric(s string) bool {
+	return numericRegExp.MatchString(s)
+}
+
+var numericRegExp, _ = regexp.Compile("^[0-9]+$")
