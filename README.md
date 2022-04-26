@@ -5,7 +5,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/go-zoox/core-utils)](https://goreportcard.com/report/github.com/go-zoox/core-utils)
 [![Coverage Status](https://coveralls.io/repos/github/go-zoox/core-utils/badge.svg?branch=master)](https://coveralls.io/github/go-zoox/core-utils?branch=master)
 [![GitHub issues](https://img.shields.io/github/issues/go-zoox/core-utils.svg)](https://github.com/go-zoox/core-utils/issues)
-[![Release](https://img.shields.io/github/core-utils/go-zoox/core-utils.svg?label=Release)](https://github.com/go-zoox/core-utils/core-utilss)
+[![Release](https://img.shields.io/github/tag/go-zoox/core-utils.svg?label=Release)](https://github.com/go-zoox/core-utils/tags)
 
 ## Installation
 To install the package, run:
