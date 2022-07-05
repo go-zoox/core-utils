@@ -1,3 +1,3 @@
 package coreutils
 
-var Version = "1.0.5"
+var Version = "1.0.6"
