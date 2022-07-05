@@ -2,18 +2,18 @@ package safe
 
 import "sync"
 
-type safeInt struct {
+type Int struct {
 	sync.RWMutex
 	data int
 }
 
 // NewInt returns a new safe int
-func NewInt() *safeInt {
-	return &safeInt{}
+func NewInt() *Int {
+	return &Int{}
 }
 
 // Set sets the int to the given value
-func (i *safeInt) Set(value int) {
+func (i *Int) Set(value int) {
 	i.Lock()
 	defer i.Unlock()
 
@@ -21,7 +21,7 @@ func (i *safeInt) Set(value int) {
 }
 
 // Get returns the int
-func (i *safeInt) Get() int {
+func (i *Int) Get() int {
 	i.RLock()
 	defer i.RUnlock()
 

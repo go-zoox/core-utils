@@ -2,20 +2,20 @@ package safe
 
 import "sync"
 
-type safeMap struct {
+type Map struct {
 	sync.RWMutex
 	data map[string]interface{}
 }
 
 // NewMap returns a new safe map
-func NewMap() *safeMap {
-	return &safeMap{
+func NewMap() *Map {
+	return &Map{
 		data: make(map[string]interface{}),
 	}
 }
 
 // Set sets a key = value in the map
-func (m *safeMap) Set(key string, value interface{}) {
+func (m *Map) Set(key string, value interface{}) {
 	m.Lock()
 	defer m.Unlock()
 
@@ -23,7 +23,7 @@ func (m *safeMap) Set(key string, value interface{}) {
 }
 
 // Get returns the value for a key
-func (m *safeMap) Get(key string) interface{} {
+func (m *Map) Get(key string) interface{} {
 	m.RLock()
 	defer m.RUnlock()
 
@@ -31,7 +31,7 @@ func (m *safeMap) Get(key string) interface{} {
 }
 
 // Del deletes a key from the map
-func (m *safeMap) Del(key string) {
+func (m *Map) Del(key string) {
 	m.Lock()
 	defer m.Unlock()
 
@@ -41,7 +41,7 @@ func (m *safeMap) Del(key string) {
 }
 
 // Keys returns all the keys in the map
-func (m *safeMap) Keys() []string {
+func (m *Map) Keys() []string {
 	m.RLock()
 	defer m.RUnlock()
 
@@ -54,7 +54,7 @@ func (m *safeMap) Keys() []string {
 }
 
 // Clear removes all elements from the map
-func (m *safeMap) Clear() {
+func (m *Map) Clear() {
 	m.Lock()
 	defer m.Unlock()
 

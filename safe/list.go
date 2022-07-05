@@ -4,20 +4,20 @@ import (
 	"sync"
 )
 
-type safeList struct {
+type List struct {
 	sync.RWMutex
 	data []interface{}
 }
 
 // NewList returns a new safe list
-func NewList() *safeList {
-	return &safeList{
+func NewList() *List {
+	return &List{
 		data: make([]interface{}, 0),
 	}
 }
 
 // Push adds an element to the end of the list
-func (l *safeList) Push(value interface{}) {
+func (l *List) Push(value interface{}) {
 	l.Lock()
 	defer l.Unlock()
 
@@ -25,7 +25,7 @@ func (l *safeList) Push(value interface{}) {
 }
 
 // Pop removes and returns the last element of the list
-func (l *safeList) Pop() interface{} {
+func (l *List) Pop() interface{} {
 	l.Lock()
 	defer l.Unlock()
 
@@ -39,7 +39,7 @@ func (l *safeList) Pop() interface{} {
 }
 
 // Size returns the number of elements in the list
-func (l *safeList) Size() int {
+func (l *List) Size() int {
 	l.RLock()
 	defer l.RUnlock()
 
@@ -47,12 +47,12 @@ func (l *safeList) Size() int {
 }
 
 // Length is an alias of Size
-func (l *safeList) Length() int {
+func (l *List) Length() int {
 	return l.Size()
 }
 
 // Clear removes all elements from the list
-func (l *safeList) Clear() {
+func (l *List) Clear() {
 	l.Lock()
 	defer l.Unlock()
 
@@ -60,7 +60,7 @@ func (l *safeList) Clear() {
 }
 
 // Get returns the element at the given index
-func (l *safeList) Get(index int) interface{} {
+func (l *List) Get(index int) interface{} {
 	l.RLock()
 	defer l.RUnlock()
 
@@ -72,7 +72,7 @@ func (l *safeList) Get(index int) interface{} {
 }
 
 // ForEach iterates over the list and calls the given function for each element
-func (l *safeList) ForEach(f func(interface{})) {
+func (l *List) ForEach(f func(interface{})) {
 	l.RLock()
 	defer l.RUnlock()
 
@@ -82,7 +82,7 @@ func (l *safeList) ForEach(f func(interface{})) {
 }
 
 // Filter returns a new list with all elements that satisfy the given function
-func (l *safeList) Filter(f func(interface{}) bool) *safeList {
+func (l *List) Filter(f func(interface{}) bool) *List {
 	l.RLock()
 	defer l.RUnlock()
 
@@ -97,7 +97,7 @@ func (l *safeList) Filter(f func(interface{}) bool) *safeList {
 }
 
 // Reduce returns the result of reducing the list to a single value
-func (l *safeList) Reduce(f func(interface{}, interface{}) interface{}) interface{} {
+func (l *List) Reduce(f func(interface{}, interface{}) interface{}) interface{} {
 	l.RLock()
 	defer l.RUnlock()
 
@@ -114,7 +114,7 @@ func (l *safeList) Reduce(f func(interface{}, interface{}) interface{}) interfac
 }
 
 // Map returns a new list with the result of calling the given function on each element
-func (l *safeList) Map(f func(interface{}) interface{}) *safeList {
+func (l *List) Map(f func(interface{}) interface{}) *List {
 	l.RLock()
 	defer l.RUnlock()
 
@@ -127,7 +127,7 @@ func (l *safeList) Map(f func(interface{}) interface{}) *safeList {
 }
 
 // IndexOf returns the index of the given element
-func (l *safeList) IndexOf(value interface{}) int {
+func (l *List) IndexOf(value interface{}) int {
 	l.RLock()
 	defer l.RUnlock()
 
@@ -141,7 +141,7 @@ func (l *safeList) IndexOf(value interface{}) int {
 }
 
 // Find returns the first element that satisfies the given function
-func (l *safeList) Find(f func(interface{}) bool) interface{} {
+func (l *List) Find(f func(interface{}) bool) interface{} {
 	l.RLock()
 	defer l.RUnlock()
 
@@ -155,7 +155,7 @@ func (l *safeList) Find(f func(interface{}) bool) interface{} {
 }
 
 // Contains returns true if the list contains the given element
-func (l *safeList) Contains(value interface{}) bool {
+func (l *List) Contains(value interface{}) bool {
 	l.RLock()
 	defer l.RUnlock()
 
@@ -163,7 +163,7 @@ func (l *safeList) Contains(value interface{}) bool {
 }
 
 // First returns the first element of the list
-func (l *safeList) First() interface{} {
+func (l *List) First() interface{} {
 	l.RLock()
 	defer l.RUnlock()
 
@@ -175,7 +175,7 @@ func (l *safeList) First() interface{} {
 }
 
 // Last returns the last element of the list
-func (l *safeList) Last() interface{} {
+func (l *List) Last() interface{} {
 	l.RLock()
 	defer l.RUnlock()
 
@@ -187,7 +187,7 @@ func (l *safeList) Last() interface{} {
 }
 
 // Unshift adds an element to the beginning of the list
-func (l *safeList) Unshift(value interface{}) {
+func (l *List) Unshift(value interface{}) {
 	l.Lock()
 	defer l.Unlock()
 
@@ -195,7 +195,7 @@ func (l *safeList) Unshift(value interface{}) {
 }
 
 // Shift removes and returns the first element of the list
-func (l *safeList) Shift() interface{} {
+func (l *List) Shift() interface{} {
 	l.Lock()
 	defer l.Unlock()
 
@@ -209,7 +209,7 @@ func (l *safeList) Shift() interface{} {
 }
 
 // Reverse reverses the list
-func (l *safeList) Reverse() *safeList {
+func (l *List) Reverse() *List {
 	l.Lock()
 	defer l.Unlock()
 
@@ -221,7 +221,7 @@ func (l *safeList) Reverse() *safeList {
 }
 
 // Splice removes the given number of elements from the given index
-func (l *safeList) Splice(index int, count int) *safeList {
+func (l *List) Splice(index int, count int) *List {
 	l.Lock()
 	defer l.Unlock()
 
@@ -243,7 +243,7 @@ func (l *safeList) Splice(index int, count int) *safeList {
 }
 
 // Slice returns a new list with a copy of a given number of elements from the given index
-func (l *safeList) Slice(start int, end int) *safeList {
+func (l *List) Slice(start int, end int) *List {
 	l.RLock()
 	defer l.RUnlock()
 
@@ -268,7 +268,7 @@ func (l *safeList) Slice(start int, end int) *safeList {
 }
 
 // Swap swaps the elements at the given indices
-func (l *safeList) Swap(index1 int, index2 int) {
+func (l *List) Swap(index1 int, index2 int) {
 	l.Lock()
 	defer l.Unlock()
 

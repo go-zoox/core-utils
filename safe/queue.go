@@ -2,20 +2,20 @@ package safe
 
 import "sync"
 
-type safeQueue struct {
+type Queue struct {
 	sync.RWMutex
 	data []interface{}
 }
 
 // NewQueue returns a new safe queue
-func NewQueue() *safeQueue {
-	return &safeQueue{
+func NewQueue() *Queue {
+	return &Queue{
 		data: make([]interface{}, 0),
 	}
 }
 
 // Enqueue adds an element to the end of the queue
-func (q *safeQueue) Enqueue(value interface{}) {
+func (q *Queue) Enqueue(value interface{}) {
 	q.Lock()
 	defer q.Unlock()
 
@@ -23,7 +23,7 @@ func (q *safeQueue) Enqueue(value interface{}) {
 }
 
 // Dequeue removes and returns the first element of the queue
-func (q *safeQueue) Dequeue() interface{} {
+func (q *Queue) Dequeue() interface{} {
 	q.Lock()
 	defer q.Unlock()
 
@@ -37,7 +37,7 @@ func (q *safeQueue) Dequeue() interface{} {
 }
 
 // Size returns the number of elements in the queue
-func (q *safeQueue) Size() int {
+func (q *Queue) Size() int {
 	q.RLock()
 	defer q.RUnlock()
 
@@ -45,7 +45,7 @@ func (q *safeQueue) Size() int {
 }
 
 // Front returns the first element of the queue
-func (q *safeQueue) Front() interface{} {
+func (q *Queue) Front() interface{} {
 	q.RLock()
 	defer q.RUnlock()
 
@@ -57,7 +57,7 @@ func (q *safeQueue) Front() interface{} {
 }
 
 // Back returns the last element of the queue
-func (q *safeQueue) Back() interface{} {
+func (q *Queue) Back() interface{} {
 	q.RLock()
 	defer q.RUnlock()
 
@@ -69,7 +69,7 @@ func (q *safeQueue) Back() interface{} {
 }
 
 // IsEmpty returns true if the queue is empty
-func (q *safeQueue) IsEmpty() bool {
+func (q *Queue) IsEmpty() bool {
 	q.RLock()
 	defer q.RUnlock()
 
@@ -77,7 +77,7 @@ func (q *safeQueue) IsEmpty() bool {
 }
 
 // Clear removes all elements from the queue
-func (q *safeQueue) Clear() {
+func (q *Queue) Clear() {
 	q.Lock()
 	defer q.Unlock()
 

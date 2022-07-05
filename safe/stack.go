@@ -2,20 +2,20 @@ package safe
 
 import "sync"
 
-type safeStack struct {
+type Stack struct {
 	sync.RWMutex
 	data []interface{}
 }
 
 // NewStack returns a new safe stack
-func NewStack() *safeStack {
-	return &safeStack{
+func NewStack() *Stack {
+	return &Stack{
 		data: make([]interface{}, 0),
 	}
 }
 
 // Push adds an element to the end of the stack
-func (m *safeStack) Push(key string, value interface{}) {
+func (m *Stack) Push(key string, value interface{}) {
 	m.Lock()
 	defer m.Unlock()
 
@@ -23,7 +23,7 @@ func (m *safeStack) Push(key string, value interface{}) {
 }
 
 // Pop removes and returns the last element of the stack
-func (m *safeStack) Pop(key string) interface{} {
+func (m *Stack) Pop(key string) interface{} {
 	m.Lock()
 	defer m.Unlock()
 
@@ -37,7 +37,7 @@ func (m *safeStack) Pop(key string) interface{} {
 }
 
 // Size returns the number of elements in the stack
-func (m *safeStack) Size(key string) int {
+func (m *Stack) Size(key string) int {
 	m.RLock()
 	defer m.RUnlock()
 
@@ -45,12 +45,12 @@ func (m *safeStack) Size(key string) int {
 }
 
 // IsEmpty returns true if the stack is empty
-func (m *safeStack) IsEmpty(key string) bool {
+func (m *Stack) IsEmpty(key string) bool {
 	return m.Size(key) == 0
 }
 
 // Clear removes all elements from the stack
-func (m *safeStack) Clear(key string) {
+func (m *Stack) Clear(key string) {
 	m.Lock()
 	defer m.Unlock()
 
@@ -58,7 +58,7 @@ func (m *safeStack) Clear(key string) {
 }
 
 // Peek returns the last element of the stack
-func (m *safeStack) Peek(key string) interface{} {
+func (m *Stack) Peek(key string) interface{} {
 	m.RLock()
 	defer m.RUnlock()
 

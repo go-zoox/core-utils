@@ -2,18 +2,18 @@ package safe
 
 import "sync"
 
-type safeString struct {
+type String struct {
 	sync.RWMutex
 	data string
 }
 
 // NewString returns a new safe string
-func NewString() *safeString {
-	return &safeString{}
+func NewString() *String {
+	return &String{}
 }
 
 // Set sets the string to the given value
-func (i *safeString) Set(value string) {
+func (i *String) Set(value string) {
 	i.Lock()
 	defer i.Unlock()
 
@@ -21,7 +21,7 @@ func (i *safeString) Set(value string) {
 }
 
 // Get returns the string
-func (i *safeString) Get() string {
+func (i *String) Get() string {
 	i.RLock()
 	defer i.RUnlock()
 
