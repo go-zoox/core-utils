@@ -278,3 +278,18 @@ func (l *List) Swap(index1 int, index2 int) {
 
 	l.data[index1], l.data[index2] = l.data[index2], l.data[index1]
 }
+
+// Iterator returns a channel that will yield successive elements of the list
+func (l *List) Iterator() <-chan interface{} {
+	c := make(chan interface{})
+	go func() {
+		l.RLock()
+		defer l.RUnlock()
+
+		for _, value := range l.data {
+			c <- value
+		}
+		close(c)
+	}()
+	return c
+}
