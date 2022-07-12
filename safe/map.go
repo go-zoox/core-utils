@@ -30,6 +30,18 @@ func (m *Map) Get(key string) interface{} {
 	return m.data[key]
 }
 
+// Has returns true if the map contains the key
+func (m *Map) Has(key string) bool {
+	m.RLock()
+	defer m.RUnlock()
+
+	if _, ok := m.data[key]; ok {
+		return true
+	} else {
+		return false
+	}
+}
+
 // Del deletes a key from the map
 func (m *Map) Del(key string) {
 	m.Lock()
