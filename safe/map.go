@@ -74,19 +74,9 @@ func (m *Map) Clear() {
 }
 
 // Iterator returns a channel that will yield all the keys and values in the map
-func (m *Map) Iterator() <-chan map[string]interface{} {
-	ch := make(chan map[string]interface{})
+func (m *Map) Iterator() map[string]interface{} {
+	m.RLock()
+	defer m.RUnlock()
 
-	go func() {
-		m.RLock()
-		defer m.RUnlock()
-
-		for key, value := range m.data {
-			ch <- map[string]interface{}{key: value}
-		}
-
-		close(ch)
-	}()
-
-	return ch
+	return m.data
 }
