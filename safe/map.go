@@ -75,6 +75,11 @@ func (m *Map) Clear() {
 
 // Iterator returns a channel that will yield all the keys and values in the map
 func (m *Map) Iterator() map[string]interface{} {
+	return m.ToMap()
+}
+
+// ToMap returns the origin map
+func (m *Map) ToMap() map[string]interface{} {
 	m.RLock()
 	defer m.RUnlock()
 
