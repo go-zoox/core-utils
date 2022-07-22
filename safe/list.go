@@ -281,6 +281,11 @@ func (l *List) Swap(index1 int, index2 int) {
 
 // Iterator returns a channel that will yield successive elements of the list
 func (l *List) Iterator() []interface{} {
+	return l.ToSlice()
+}
+
+// ToSlice returns the origin map
+func (l *List) ToSlice() []interface{} {
 	l.RLock()
 	defer l.RUnlock()
 
