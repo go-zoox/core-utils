@@ -3,7 +3,7 @@ package array
 import (
 	"sort"
 	"strconv"
-	"strings"
+	gostrings "strings"
 	"testing"
 )
 
@@ -18,7 +18,7 @@ func TestUniqueBy(t *testing.T) {
 	}
 
 	sort.Ints(unique)
-	if strings.Join(Map(unique, func(value int, index int) string { return strconv.Itoa(value) }), ",") != "1,2,3,4,5,6,7,8,9,10" {
-		t.Error("Expected 1,2,3,4,5,6,7,8,9,10, got", strings.Join(Map(unique, func(value int, index int) string { return strconv.Itoa(value) }), ","))
+	if gostrings.Join(Map(unique, func(value int, index int) string { return strconv.Itoa(value) }), ",") != "1,2,3,4,5,6,7,8,9,10" {
+		t.Error("Expected 1,2,3,4,5,6,7,8,9,10, got", gostrings.Join(Map(unique, func(value int, index int) string { return strconv.Itoa(value) }), ","))
 	}
 }

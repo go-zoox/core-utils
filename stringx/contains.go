@@ -1,8 +1,8 @@
-package stringx
+package strings
 
-import "strings"
+import gostrings "strings"
 
 // Contains returns true if s contains substr.
 func Contains(s, substr string) bool {
-	return strings.Contains(s, substr)
+	return gostrings.Contains(s, substr)
 }

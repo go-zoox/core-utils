@@ -1,8 +1,8 @@
-package stringx
+package strings
 
-import "strings"
+import gostrings "strings"
 
 // StartsWith returns true if s starts with prefix.
 func StartsWith(s, prefix string) bool {
-	return strings.HasPrefix(s, prefix)
+	return gostrings.HasPrefix(s, prefix)
 }

@@ -1,4 +1,4 @@
-package stringx
+package strings
 
 // Slice returns a substring of s.
 func Slice(s string, start int, end ...int) string {

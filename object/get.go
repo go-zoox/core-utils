@@ -4,20 +4,21 @@ import (
 	"reflect"
 	"regexp"
 	"strconv"
-	"strings"
+	gostrings "strings"
 )
 
 // Get returns the value of the key in the object.
 // Support key path
 //
 // Example:
-// 	object.Get(map[string]interface{}{"a": 1}, "a")
-//  // 1
 //
-//	object.Get(map[string]interface{}{"a": map[string]interface{}{"b": 2}}, "a.b")
-//	// 2
+//		object.Get(map[string]interface{}{"a": 1}, "a")
+//	 // 1
+//
+//		object.Get(map[string]interface{}{"a": map[string]interface{}{"b": 2}}, "a.b")
+//		// 2
 func Get[K comparable, V any](object map[K]V, key string) V {
-	keysX := strings.Split(key, ".")
+	keysX := gostrings.Split(key, ".")
 	var keys []K
 	for _, keyX := range keysX {
 		keys = append(keys, reflect.ValueOf(keyX).Interface().(K))

@@ -1,13 +1,13 @@
-package stringx
+package strings
 
-import "strings"
+import gostrings "strings"
 
 // Split splits a string into a slice of strings.
 func Split(s, sep string) []string {
-	return strings.Split(s, sep)
+	return gostrings.Split(s, sep)
 }
 
 // SplitN splits a string into a slice of strings.
 func SplitN(s, sep string, n int) []string {
-	return strings.SplitN(s, sep, n)
+	return gostrings.SplitN(s, sep, n)
 }

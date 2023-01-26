@@ -3,11 +3,11 @@ package fmt
 import (
 	"encoding/json"
 	gofmt "fmt"
-	"strings"
+	gostrings "strings"
 )
 
 func PrintJSON(vs ...interface{}) error {
-	str := new(strings.Builder)
+	str := new(gostrings.Builder)
 	for _, v := range vs {
 		j, err := json.MarshalIndent(v, "", "  ")
 		if err != nil {

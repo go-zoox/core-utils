@@ -1,8 +1,8 @@
-package stringx
+package strings
 
-import "strings"
+import gostrings "strings"
 
 // HasSuffix returns true if s ends with suffix.
 func HasSuffix(s, suffix string) bool {
-	return strings.HasSuffix(s, suffix)
+	return gostrings.HasSuffix(s, suffix)
 }
