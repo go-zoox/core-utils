@@ -9,47 +9,47 @@ import (
 // Value is the value string to spfcast to new type with spf13/
 type Value string
 
-// ToInt ...
-func (s Value) ToInt() int {
-	return cast.ToInt(s.ToString())
+// Int ...
+func (s Value) Int() int {
+	return cast.ToInt(s.String())
 }
 
-// ToInt64 ...
-func (s Value) ToInt64() int64 {
-	return cast.ToInt64(s.ToString())
+// Int64 ...
+func (s Value) Int64() int64 {
+	return cast.ToInt64(s.String())
 }
 
-// ToUInt ...
-func (s Value) ToUInt() uint {
-	return cast.ToUint(s.ToString())
+// UInt ...
+func (s Value) UInt() uint {
+	return cast.ToUint(s.String())
 }
 
-// ToUint64 ...
-func (s Value) ToUint64() uint64 {
-	return cast.ToUint64(s.ToString())
+// Uint64 ...
+func (s Value) Uint64() uint64 {
+	return cast.ToUint64(s.String())
 }
 
-// ToBool ...
-func (s Value) ToBool() bool {
-	return cast.ToBool(s.ToString())
+// Bool ...
+func (s Value) Bool() bool {
+	return cast.ToBool(s.String())
 }
 
-// ToFloat64 ...
-func (s Value) ToFloat64() float64 {
-	return cast.ToFloat64(s.ToString())
+// Float64 ...
+func (s Value) Float64() float64 {
+	return cast.ToFloat64(s.String())
 }
 
-// ToTime ...
-func (s Value) ToTime() time.Time {
-	return cast.ToTime(s.ToString())
+// Time ...
+func (s Value) Time() time.Time {
+	return cast.ToTime(s.String())
 }
 
-// ToDuration ...
-func (s Value) ToDuration() time.Duration {
-	return cast.ToDuration(s.ToString())
+// Duration ...
+func (s Value) Duration() time.Duration {
+	return cast.ToDuration(s.String())
 }
 
-// ToString ...
-func (s Value) ToString() string {
+// String ...
+func (s Value) String() string {
 	return string(s)
 }
