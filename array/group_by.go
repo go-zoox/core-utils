@@ -1,5 +1,6 @@
 package array
 
+// GroupBy ...
 func GroupBy[T any, K comparable](values []T, iteratee func(value T, index int) K) map[K][]T {
 	grouped := make(map[K][]T)
 

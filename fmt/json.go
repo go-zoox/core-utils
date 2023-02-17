@@ -6,6 +6,7 @@ import (
 	gostrings "strings"
 )
 
+// PrintJSON prints the JSON representation of the object.
 func PrintJSON(vs ...interface{}) error {
 	str := new(gostrings.Builder)
 	for _, v := range vs {

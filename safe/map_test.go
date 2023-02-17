@@ -40,7 +40,7 @@ func TestSafeMap(t *testing.T) {
 			return
 		}
 
-		i += 1
+		i++
 		go m.Set("a", i)
 	}
 }

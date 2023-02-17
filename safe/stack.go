@@ -2,6 +2,7 @@ package safe
 
 import "sync"
 
+// Stack ...
 type Stack struct {
 	sync.RWMutex
 	data []interface{}

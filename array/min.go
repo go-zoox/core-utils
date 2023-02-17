@@ -1,5 +1,6 @@
 package array
 
+// Number ...
 type Number interface {
 	int | int64 | float64 | float32 | uint | uint8 | uint16 | uint32 | uint64 | int8 | int16 | int32
 }

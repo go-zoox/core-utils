@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// random returns a random string of length n.
+// Random returns a random string of length n.
 func Random(n int, seeds ...string) string {
 	rand.Seed(time.Now().UnixNano())
 

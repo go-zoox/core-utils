@@ -2,12 +2,13 @@ package safe
 
 import "sync"
 
+// Int64 ...
 type Int64 struct {
 	sync.RWMutex
 	data int64
 }
 
-// NewInt returns a new safe int
+// NewInt64 returns a new safe int
 func NewInt64() *Int64 {
 	return &Int64{}
 }
