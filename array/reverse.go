@@ -2,9 +2,12 @@ package array
 
 // Reverse returns an array of reversed values.
 func Reverse[T any](collection []T) []T {
-	ncollection := make([]T, len(collection))
+	length := len(collection)
+	half := length/2 + 1
+	ncollection := make([]T, length)
 
-	for i, j := 0, len(collection)-1; i < j; i, j = i+1, j-1 {
+	for i := 0; i < half; i++ {
+		j := length - i - 1
 		ncollection[i], ncollection[j] = collection[j], collection[i]
 	}
 
