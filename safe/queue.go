@@ -2,6 +2,7 @@ package safe
 
 import "sync"
 
+// Queue ...
 type Queue struct {
 	sync.RWMutex
 	data []interface{}

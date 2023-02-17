@@ -2,6 +2,7 @@ package safe
 
 import "sync"
 
+// Int ...
 type Int struct {
 	sync.RWMutex
 	data int

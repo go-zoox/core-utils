@@ -4,6 +4,7 @@ import (
 	"sync"
 )
 
+// List ...
 type List struct {
 	sync.RWMutex
 	data []interface{}

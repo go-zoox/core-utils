@@ -2,6 +2,7 @@ package safe
 
 import "sync"
 
+// Map ...
 type Map struct {
 	sync.RWMutex
 	data map[string]interface{}
@@ -37,9 +38,9 @@ func (m *Map) Has(key string) bool {
 
 	if _, ok := m.data[key]; ok {
 		return true
-	} else {
-		return false
 	}
+
+	return false
 }
 
 // Del deletes a key from the map
