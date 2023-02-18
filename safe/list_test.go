@@ -69,3 +69,75 @@ func TestSafeList(t *testing.T) {
 		t.Errorf("Expected 8, got %v", x)
 	}
 }
+
+func TestListCapacity(t *testing.T) {
+	capacity := 3
+	l := NewList(capacity)
+	l.Push(1)
+	l.Push(2)
+	l.Push(3)
+	if l.Size() != 3 {
+		t.Fatalf("expected 3, got %v", l.Size())
+	}
+
+	l.Push(4)
+	if l.Size() != 3 {
+		t.Fatalf("expected 3, got %v", l.Size())
+	}
+	if l.data[0] != 2 {
+		t.Fatalf("expected 2, got %v", l.data[0])
+	}
+	if l.data[1] != 3 {
+		t.Fatalf("expected 3, got %v", l.data[0])
+	}
+	if l.data[2] != 4 {
+		t.Fatalf("expected 4, got %v", l.data[0])
+	}
+
+	l.Push(5)
+	if l.Size() != 3 {
+		t.Fatalf("expected 3, got %v", l.Size())
+	}
+	if l.data[0] != 3 {
+		t.Fatalf("expected 3, got %v", l.data[0])
+	}
+	if l.data[1] != 4 {
+		t.Fatalf("expected 4, got %v", l.data[0])
+	}
+	if l.data[2] != 5 {
+		t.Fatalf("expected 5, got %v", l.data[0])
+	}
+
+	l.Unshift(6)
+	if l.Size() != 3 {
+		t.Fatalf("expected 3, got %v", l.Size())
+	}
+	if l.data[0] != 6 {
+		t.Fatalf("expected 6, got %v", l.data[0])
+	}
+	if l.data[1] != 3 {
+		t.Fatalf("expected 3, got %v", l.data[0])
+	}
+	if l.data[2] != 4 {
+		t.Fatalf("expected 4, got %v", l.data[0])
+	}
+
+	l.Pop()
+	if l.Size() != 2 {
+		t.Fatalf("expected 2, got %v", l.Size())
+	}
+	if l.data[0] != 6 {
+		t.Fatalf("expected 6, got %v", l.data[0])
+	}
+	if l.data[1] != 3 {
+		t.Fatalf("expected 3, got %v", l.data[0])
+	}
+
+	l.Shift()
+	if l.Size() != 1 {
+		t.Fatalf("expected 1, got %v", l.Size())
+	}
+	if l.data[0] != 3 {
+		t.Fatalf("expected 3, got %v", l.data[0])
+	}
+}
