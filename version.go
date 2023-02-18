@@ -1,4 +1,4 @@
 package coreutils
 
 // Version ...
-var Version = "1.2.4"
+var Version = "1.2.5"
