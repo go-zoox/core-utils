@@ -33,3 +33,52 @@ func TestGet(t *testing.T) {
 		t.Errorf("Expected %d, got %d", 5, Get(object, "d.f"))
 	}
 }
+
+func TestGet2(t *testing.T) {
+	object := map[string]interface{}{
+		"app_name":  "gozoox",
+		"log_level": "DEBUG",
+		"redis": map[string]interface{}{
+			"ip":   "127.0.0.1",
+			"port": "6739",
+			// "port": 6739,
+		},
+		"ports": []int64{
+			6739,
+			6740,
+		},
+		"maps": map[string]interface{}{
+			"key1": "value1",
+			"key2": "value2",
+		},
+		"providers": map[string]any{
+			"google": map[string]any{
+				"client_id":     "google_client_id",
+				"client_secret": "google_client_secret",
+			},
+			"facebook": map[string]any{
+				"client_id":     "facebook_client_id",
+				"client_secret": "facebook_client_secret",
+			},
+			"github": map[string]any{
+				"client_id":     "github_client_id",
+				"client_secret": "github_client_secret",
+			},
+		},
+		"users": []map[string]any{
+			{
+				"name": "user1",
+				"age":  18,
+			},
+			{
+				"name": "user2",
+				"age":  20,
+			},
+		},
+		"type_transform": "666",
+	}
+
+	if Get(object, "providers.google.client_id") != "google_client_id" {
+		t.Errorf("Expected %s, got %s", "google_client_id", Get(object, "providers.google.client_id").(string))
+	}
+}
