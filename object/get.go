@@ -3,8 +3,9 @@ package object
 import (
 	"reflect"
 	"regexp"
-	"strconv"
 	gostrings "strings"
+
+	"github.com/go-zoox/core-utils/cast"
 )
 
 // Get returns the value of the key in the object.
@@ -37,7 +38,7 @@ func Get[K comparable, V any](object map[K]V, key string) V {
 				return empty
 			}
 
-			ktt, _ := strconv.Atoi(kt)
+			ktt := cast.ToInt(kt)
 			if ktt >= reflect.ValueOf(tmp).Len() {
 				var empty V
 				return empty
