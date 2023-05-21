@@ -143,3 +143,21 @@ func TestGet3(t *testing.T) {
 		t.Errorf("Expected %s, got %s", "user2", Get(object, "users.1.name").(string))
 	}
 }
+
+// reflect: call of reflect.Value.Interface on zero Value
+func TestGet4(t *testing.T) {
+	value := map[string]interface{}{
+		"foo8": nil,
+	}
+
+	// testify.Equal(t, false, Get(value, "foo8").(bool))
+	// testify.Equal(t, false, Get(value, "foo9").(bool))
+
+	if Get(value, "foo8") != nil {
+		t.Errorf("Expected %v, got %s", nil, Get(value, "foo8"))
+	}
+
+	if Get(value, "foo9") != nil {
+		t.Errorf("Expected %v, got %s", nil, Get(value, "foo9"))
+	}
+}
