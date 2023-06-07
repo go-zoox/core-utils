@@ -1,6 +1,11 @@
 package typ
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+
+	"github.com/go-zoox/core-utils/object"
+)
 
 // Value ...
 type Value struct {
@@ -45,7 +50,7 @@ func (v *Value) String() string {
 		panic("call Get(key) first")
 	}
 
-	if v, ok := v.Data[v.key].(string); ok {
+	if v, ok := object.Get(v.Data, v.key).(string); ok {
 		return v
 	}
 
@@ -58,7 +63,7 @@ func (v *Value) Int64() int64 {
 		panic("call Get(key) first")
 	}
 
-	if v, ok := v.Data[v.key].(int64); ok {
+	if v, ok := object.Get(v.Data, v.key).(int64); ok {
 		return v
 	}
 
@@ -71,11 +76,11 @@ func (v *Value) Int64E() (vv int64, err error) {
 		panic("call Get(key) first")
 	}
 
-	if v, ok := v.Data[v.key].(int64); ok {
+	if v, ok := object.Get(v.Data, v.key).(int64); ok {
 		return v, nil
 	}
 
-	return 0, fmt.Errorf("value(%v) cannot be translated to int64", v.Data[v.key])
+	return 0, fmt.Errorf("value(%v) cannot be translated to int64", object.Get(v.Data, v.key))
 }
 
 // Int ...
@@ -84,7 +89,7 @@ func (v *Value) Int() int {
 		panic("call Get(key) first")
 	}
 
-	if v, ok := v.Data[v.key].(int); ok {
+	if v, ok := object.Get(v.Data, v.key).(int); ok {
 		return v
 	}
 
@@ -97,11 +102,11 @@ func (v *Value) IntE() (vv int, err error) {
 		panic("call Get(key) first")
 	}
 
-	if v, ok := v.Data[v.key].(int); ok {
+	if v, ok := object.Get(v.Data, v.key).(int); ok {
 		return v, nil
 	}
 
-	return 0, fmt.Errorf("value(%v) cannot be translated to int", v.Data[v.key])
+	return 0, fmt.Errorf("value(%v) cannot be translated to int", object.Get(v.Data, v.key))
 }
 
 // Bool ...
@@ -110,7 +115,7 @@ func (v *Value) Bool() bool {
 		panic("call Get(key) first")
 	}
 
-	if v, ok := v.Data[v.key].(bool); ok {
+	if v, ok := object.Get(v.Data, v.key).(bool); ok {
 		return v
 	}
 
@@ -123,11 +128,11 @@ func (v *Value) BoolE() (vv bool, err error) {
 		panic("call Get(key) first")
 	}
 
-	if v, ok := v.Data[v.key].(bool); ok {
+	if v, ok := object.Get(v.Data, v.key).(bool); ok {
 		return v, nil
 	}
 
-	return false, fmt.Errorf("value(%v) cannot be translated to bool", v.Data[v.key])
+	return false, fmt.Errorf("value(%v) cannot be translated to bool", object.Get(v.Data, v.key))
 }
 
 // Float64 ...
@@ -136,7 +141,7 @@ func (v *Value) Float64() float64 {
 		panic("call Get(key) first")
 	}
 
-	if v, ok := v.Data[v.key].(float64); ok {
+	if v, ok := object.Get(v.Data, v.key).(float64); ok {
 		return v
 	}
 
@@ -149,9 +154,15 @@ func (v *Value) Float64E() (vv float64, err error) {
 		panic("call Get(key) first")
 	}
 
-	if v, ok := v.Data[v.key].(float64); ok {
+	if v, ok := object.Get(v.Data, v.key).(float64); ok {
 		return v, nil
 	}
 
-	return 0, fmt.Errorf("value(%v) cannot be translated to float64", v.Data[v.key])
+	return 0, fmt.Errorf("value(%v) cannot be translated to float64", object.Get(v.Data, v.key))
+}
+
+// Unmarshal ...
+func (v *Value) Unmarshal(vv interface{}) error {
+	bytes, _ := json.Marshal(v.Data)
+	return json.Unmarshal(bytes, vv)
 }

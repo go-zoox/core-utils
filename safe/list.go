@@ -7,13 +7,20 @@ import (
 // List ...
 type List struct {
 	sync.RWMutex
-	data []interface{}
+	data     []interface{}
+	capacity int
 }
 
 // NewList returns a new safe list
-func NewList() *List {
+func NewList(capacity ...int) *List {
+	capacityX := 0
+	if len(capacity) > 0 && capacity[0] > 0 {
+		capacityX = capacity[0]
+	}
+
 	return &List{
-		data: make([]interface{}, 0),
+		data:     make([]interface{}, 0),
+		capacity: capacityX,
 	}
 }
 
@@ -23,6 +30,11 @@ func (l *List) Push(value interface{}) {
 	defer l.Unlock()
 
 	l.data = append(l.data, value)
+
+	// check capacity when push
+	if l.capacity > 0 && len(l.data) > l.capacity {
+		l.data = l.data[len(l.data)-l.capacity:]
+	}
 }
 
 // Pop removes and returns the last element of the list
@@ -73,12 +85,14 @@ func (l *List) Get(index int) interface{} {
 }
 
 // ForEach iterates over the list and calls the given function for each element
-func (l *List) ForEach(f func(interface{})) {
+func (l *List) ForEach(f func(interface{}) (stop bool)) {
 	l.RLock()
 	defer l.RUnlock()
 
 	for _, value := range l.data {
-		f(value)
+		if stop := f(value); stop {
+			break
+		}
 	}
 }
 
@@ -193,6 +207,11 @@ func (l *List) Unshift(value interface{}) {
 	defer l.Unlock()
 
 	l.data = append([]interface{}{value}, l.data...)
+
+	// check capacity when push
+	if l.capacity > 0 && len(l.data) > l.capacity {
+		l.data = l.data[:l.capacity]
+	}
 }
 
 // Shift removes and returns the first element of the list

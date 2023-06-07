@@ -3,8 +3,9 @@ package object
 import (
 	"reflect"
 	"regexp"
-	"strconv"
 	gostrings "strings"
+
+	"github.com/go-zoox/core-utils/cast"
 )
 
 // Get returns the value of the key in the object.
@@ -17,7 +18,17 @@ import (
 //
 //		object.Get(map[string]interface{}{"a": map[string]interface{}{"b": 2}}, "a.b")
 //		// 2
-func Get[K comparable, V any](object map[K]V, key string) V {
+func Get[K comparable, V any](object map[K]V, key string) (vvv V) {
+	defer func() {
+		if err := recover(); err != nil {
+			if err == "reflect: call of reflect.Value.Interface on zero Value" {
+				var empty V
+				vvv = empty
+				return
+			}
+		}
+	}()
+
 	keysX := gostrings.Split(key, ".")
 	var keys []K
 	for _, keyX := range keysX {
@@ -37,7 +48,7 @@ func Get[K comparable, V any](object map[K]V, key string) V {
 				return empty
 			}
 
-			ktt, _ := strconv.Atoi(kt)
+			ktt := cast.ToInt(kt)
 			if ktt >= reflect.ValueOf(tmp).Len() {
 				var empty V
 				return empty
