@@ -3,7 +3,7 @@ module github.com/go-zoox/core-utils
 go 1.18
 
 require (
-	github.com/go-zoox/testify v1.0.0
+	github.com/go-zoox/testify v1.0.2
 	github.com/spf13/cast v1.5.0
 )
 
