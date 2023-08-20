@@ -7,12 +7,12 @@ import (
 	"github.com/go-zoox/core-utils/object"
 )
 
-const FormatPattern = `{{[^}]+}}`
+const FormatRe = `\{[^\}]+\}`
 
-// Format formats a string with template bracket {{key}}} and value map.
+// Format formats a string with template bracket {key}}} and value map.
 func Format(pattern string, data map[string]any) string {
-	bytes := regexp.MustCompile(FormatPattern).ReplaceAllFunc([]byte(pattern), func(b []byte) []byte {
-		key := string(b[2 : len(b)-2])
+	bytes := regexp.MustCompile(FormatRe).ReplaceAllFunc([]byte(pattern), func(b []byte) []byte {
+		key := string(b[1 : len(b)-1])
 		value := object.Get(data, key)
 
 		if value == nil {
