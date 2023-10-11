@@ -14,7 +14,8 @@ func (w *writer) Write(b []byte) (n int, err error) {
 	return w.fn(b)
 }
 
-func WriterWrapF(fn func(b []byte) (n int, err error)) gio.Writer {
+// WriterWrapFunc wraps a function into a Writer.
+func WriterWrapFunc(fn func(b []byte) (n int, err error)) gio.Writer {
 	return &writer{
 		fn: fn,
 	}
@@ -36,7 +37,8 @@ func (w *writerCloser) Close() error {
 	return w.close()
 }
 
-func WriterCloserWrapF(
+// WriterCloserWrapFunc wraps a function into a WriterCloser.
+func WriterCloserWrapFunc(
 	write func(b []byte) (n int, err error),
 	close func() error,
 ) gio.WriteCloser {

@@ -7,7 +7,8 @@ type reader struct {
 	fn func(p []byte) (n int, err error)
 }
 
-func ReaderWrapF(fn func(p []byte) (n int, err error)) io.Reader {
+// ReaderWrapFunc wraps a function into a Reader.
+func ReaderWrapFunc(fn func(p []byte) (n int, err error)) io.Reader {
 	return &reader{
 		fn: fn,
 	}
@@ -29,7 +30,8 @@ func (r *readerCloser) Close() error {
 	return r.close()
 }
 
-func ReaderCloserWrapF(
+// ReaderCloserWrapFunc wraps a function into a ReaderCloser.
+func ReaderCloserWrapFunc(
 	read func(p []byte) (n int, err error),
 	close func() error,
 ) io.ReadCloser {

@@ -7,6 +7,7 @@ import (
 	"github.com/go-zoox/core-utils/object"
 )
 
+// FormatRe is the regular expression for format.
 const FormatRe = `\{[^\}]+\}`
 
 // Format formats a string with template bracket {key}}} and value map.
