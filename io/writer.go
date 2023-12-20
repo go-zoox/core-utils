@@ -21,7 +21,7 @@ func WriterWrapFunc(fn func(b []byte) (n int, err error)) gio.Writer {
 	}
 }
 
-type writerCloser struct {
+type writeCloser struct {
 	gio.Writer
 	gio.Closer
 
@@ -29,20 +29,20 @@ type writerCloser struct {
 	close func() error
 }
 
-func (w *writerCloser) Write(b []byte) (n int, err error) {
+func (w *writeCloser) Write(b []byte) (n int, err error) {
 	return w.write(b)
 }
 
-func (w *writerCloser) Close() error {
+func (w *writeCloser) Close() error {
 	return w.close()
 }
 
-// WriterCloserWrapFunc wraps a function into a WriterCloser.
-func WriterCloserWrapFunc(
+// WriteCloserWrapFunc wraps a function into a WriteCloser.
+func WriteCloserWrapFunc(
 	write func(b []byte) (n int, err error),
 	close func() error,
 ) gio.WriteCloser {
-	return &writerCloser{
+	return &writeCloser{
 		write: write,
 		close: close,
 	}

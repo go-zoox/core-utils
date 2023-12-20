@@ -4,17 +4,21 @@ import "io"
 
 type reader struct {
 	io.Reader
-	fn func(p []byte) (n int, err error)
+	read func(p []byte) (n int, err error)
 }
 
-// ReaderWrapFunc wraps a function into a Reader.
-func ReaderWrapFunc(fn func(p []byte) (n int, err error)) io.Reader {
+func (r *reader) Read(p []byte) (n int, err error) {
+	return r.read(p)
+}
+
+// ReadWrapFunc wraps a function into a Reader.
+func ReadWrapFunc(read func(p []byte) (n int, err error)) io.Reader {
 	return &reader{
-		fn: fn,
+		read: read,
 	}
 }
 
-type readerCloser struct {
+type readCloser struct {
 	io.Reader
 	io.Closer
 
@@ -22,20 +26,20 @@ type readerCloser struct {
 	close func() error
 }
 
-func (r *readerCloser) Read(p []byte) (n int, err error) {
+func (r *readCloser) Read(p []byte) (n int, err error) {
 	return r.read(p)
 }
 
-func (r *readerCloser) Close() error {
+func (r *readCloser) Close() error {
 	return r.close()
 }
 
-// ReaderCloserWrapFunc wraps a function into a ReaderCloser.
-func ReaderCloserWrapFunc(
+// ReadCloserWrapFunc wraps a function into a ReadCloser.
+func ReadCloserWrapFunc(
 	read func(p []byte) (n int, err error),
 	close func() error,
 ) io.ReadCloser {
-	return &readerCloser{
+	return &readCloser{
 		read:  read,
 		close: close,
 	}
