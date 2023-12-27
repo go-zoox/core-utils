@@ -19,11 +19,13 @@ func NewMap() *Map {
 }
 
 // Set sets a key = value in the map
-func (m *Map) Set(key string, value interface{}) {
+func (m *Map) Set(key string, value interface{}) error {
 	m.Lock()
 	defer m.Unlock()
 
 	m.data[key] = value
+
+	return nil
 }
 
 // Get returns the value for a key
@@ -52,13 +54,15 @@ func (m *Map) Has(key string) bool {
 }
 
 // Del deletes a key from the map
-func (m *Map) Del(key string) {
+func (m *Map) Del(key string) error {
 	m.Lock()
 	defer m.Unlock()
 
 	if _, ok := m.data[key]; ok {
 		delete(m.data, key)
 	}
+
+	return nil
 }
 
 // Keys returns all the keys in the map
@@ -75,11 +79,13 @@ func (m *Map) Keys() []string {
 }
 
 // Clear removes all elements from the map
-func (m *Map) Clear() {
+func (m *Map) Clear() error {
 	m.Lock()
 	defer m.Unlock()
 
 	m.data = make(map[string]interface{})
+
+	return nil
 }
 
 // Iterator returns a channel that will yield all the keys and values in the map
