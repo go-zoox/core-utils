@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/go-zoox/core-utils/strings"
+	"strings"
 )
 
 func TestSort(t *testing.T) {
