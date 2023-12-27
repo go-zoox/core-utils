@@ -1,6 +1,9 @@
 package safe
 
-import "sync"
+import (
+	"fmt"
+	"sync"
+)
 
 // Map ...
 type Map struct {
@@ -24,11 +27,16 @@ func (m *Map) Set(key string, value interface{}) {
 }
 
 // Get returns the value for a key
-func (m *Map) Get(key string) interface{} {
+func (m *Map) Get(key string) (interface{}, error) {
 	m.RLock()
 	defer m.RUnlock()
 
-	return m.data[key]
+	v, ok := m.data[key]
+	if !ok {
+		return nil, fmt.Errorf("key %s not found", key)
+	}
+
+	return v, nil
 }
 
 // Has returns true if the map contains the key

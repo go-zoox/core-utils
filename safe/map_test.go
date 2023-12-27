@@ -8,24 +8,24 @@ func TestSafeMap(t *testing.T) {
 	m.Set("b", 2)
 	m.Set("c", 3)
 
-	if v := m.Get("a"); v != 1 {
+	if v, _ := m.Get("a"); v != 1 {
 		t.Errorf("Expected 1, got %v", v)
 	}
 
-	if v := m.Get("b"); v != 2 {
+	if v, _ := m.Get("b"); v != 2 {
 		t.Errorf("Expected 2, got %v", v)
 	}
 
-	if v := m.Get("c"); v != 3 {
+	if v, _ := m.Get("c"); v != 3 {
 		t.Errorf("Expected 3, got %v", v)
 	}
 
-	if v := m.Get("d"); v != nil {
+	if v, _ := m.Get("d"); v != nil {
 		t.Errorf("Expected nil, got %v", v)
 	}
 
 	m.Del("a")
-	if v := m.Get("a"); v != nil {
+	if v, _ := m.Get("a"); v != nil {
 		t.Errorf("Expected nil, got %v", v)
 	}
 
