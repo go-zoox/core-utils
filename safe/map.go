@@ -1,7 +1,6 @@
 package safe
 
 import (
-	"fmt"
 	"sync"
 )
 
@@ -29,16 +28,16 @@ func (m *Map) Set(key string, value interface{}) error {
 }
 
 // Get returns the value for a key
-func (m *Map) Get(key string) (interface{}, error) {
+func (m *Map) Get(key string) interface{} {
 	m.RLock()
 	defer m.RUnlock()
 
 	v, ok := m.data[key]
 	if !ok {
-		return nil, fmt.Errorf("key %s not found", key)
+		return nil
 	}
 
-	return v, nil
+	return v
 }
 
 // Has returns true if the map contains the key
