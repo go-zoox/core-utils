@@ -28,3 +28,19 @@ func (i *Int) Get() int {
 
 	return i.data
 }
+
+// Inc increments the int by step
+func (i *Int) Inc(step int) {
+	i.Lock()
+	defer i.Unlock()
+
+	i.data += step
+}
+
+// Dec decrements the int by step
+func (i *Int) Dec(step int) {
+	i.Lock()
+	defer i.Unlock()
+
+	i.data -= step
+}
