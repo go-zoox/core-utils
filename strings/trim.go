@@ -21,3 +21,13 @@ func TrimLeft(s, cutset string) string {
 func TrimRight(s, cutset string) string {
 	return gostrings.TrimRight(s, cutset)
 }
+
+// TrimPrefix returns s without the provided leading prefix string.
+func TrimPrefix(s, prefix string) string {
+	return gostrings.TrimPrefix(s, prefix)
+}
+
+// TrimSuffix returns s without the provided trailing suffix string.
+func TrimSuffix(s, suffix string) string {
+	return gostrings.TrimSuffix(s, suffix)
+}
