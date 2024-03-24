@@ -5,11 +5,11 @@ import (
 )
 
 // Map ...
-type Map struct {
+type Map[K comparable, V any] struct {
 	sync.RWMutex
 	cfg *MapConfig
 	//
-	data map[string]interface{}
+	data map[K]V
 	//
 	queueForCapacity *Queue
 }
@@ -23,7 +23,7 @@ type MapConfig struct {
 type MapOption func(*MapConfig)
 
 // NewMap returns a new safe map
-func NewMap(opts ...MapOption) *Map {
+func NewMap[K comparable, V any](opts ...MapOption) *Map[K, V] {
 	cfg := &MapConfig{
 		Capacity: 0,
 	}
@@ -31,9 +31,9 @@ func NewMap(opts ...MapOption) *Map {
 		opt(cfg)
 	}
 
-	m := &Map{
+	m := &Map[K, V]{
 		cfg:  cfg,
-		data: make(map[string]interface{}),
+		data: make(map[K]V),
 	}
 
 	if cfg.Capacity > 0 {
@@ -44,12 +44,12 @@ func NewMap(opts ...MapOption) *Map {
 }
 
 // Set sets a key = value in the map
-func (m *Map) Set(key string, value interface{}) error {
+func (m *Map[K, V]) Set(key K, value V) error {
 	m.Lock()
 	defer m.Unlock()
 
 	if m.cfg.Capacity > 0 && m.queueForCapacity.Size() >= m.cfg.Capacity {
-		keyToRemove := m.queueForCapacity.Dequeue().(string)
+		keyToRemove := m.queueForCapacity.Dequeue().(K)
 		delete(m.data, keyToRemove)
 	}
 
@@ -63,20 +63,20 @@ func (m *Map) Set(key string, value interface{}) error {
 }
 
 // Get returns the value for a key
-func (m *Map) Get(key string) interface{} {
+func (m *Map[K, V]) Get(key K) V {
 	m.RLock()
 	defer m.RUnlock()
 
 	v, ok := m.data[key]
 	if !ok {
-		return nil
+		return v
 	}
 
 	return v
 }
 
 // Has returns true if the map contains the key
-func (m *Map) Has(key string) bool {
+func (m *Map[K, V]) Has(key K) bool {
 	m.RLock()
 	defer m.RUnlock()
 
@@ -88,7 +88,7 @@ func (m *Map) Has(key string) bool {
 }
 
 // Del deletes a key from the map
-func (m *Map) Del(key string) error {
+func (m *Map[K, V]) Del(key K) error {
 	m.Lock()
 	defer m.Unlock()
 
@@ -100,11 +100,11 @@ func (m *Map) Del(key string) error {
 }
 
 // Keys returns all the keys in the map
-func (m *Map) Keys() []string {
+func (m *Map[K, V]) Keys() []K {
 	m.RLock()
 	defer m.RUnlock()
 
-	keys := make([]string, 0, len(m.data))
+	keys := make([]K, 0, len(m.data))
 	for key := range m.data {
 		keys = append(keys, key)
 	}
@@ -113,22 +113,22 @@ func (m *Map) Keys() []string {
 }
 
 // Clear removes all elements from the map
-func (m *Map) Clear() error {
+func (m *Map[K, V]) Clear() error {
 	m.Lock()
 	defer m.Unlock()
 
-	m.data = make(map[string]interface{})
+	m.data = make(map[K]V)
 
 	return nil
 }
 
 // Iterator returns a channel that will yield all the keys and values in the map
-func (m *Map) Iterator() map[string]interface{} {
+func (m *Map[K, V]) Iterator() map[K]V {
 	return m.ToMap()
 }
 
 // ToMap returns the origin map
-func (m *Map) ToMap() map[string]interface{} {
+func (m *Map[K, V]) ToMap() map[K]V {
 	m.RLock()
 	defer m.RUnlock()
 

@@ -3,7 +3,7 @@ package safe
 import "testing"
 
 func TestSafeMap(t *testing.T) {
-	m := NewMap()
+	m := NewMap[string, any]()
 	m.Set("a", 1)
 	m.Set("b", 2)
 	m.Set("c", 3)
@@ -46,7 +46,7 @@ func TestSafeMap(t *testing.T) {
 }
 
 func TestSafeMapWithCapacity(t *testing.T) {
-	m := NewMap(func(mc *MapConfig) {
+	m := NewMap[string, any](func(mc *MapConfig) {
 		mc.Capacity = 2
 	})
 
