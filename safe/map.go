@@ -7,14 +7,38 @@ import (
 // Map ...
 type Map struct {
 	sync.RWMutex
+	cfg *MapConfig
+	//
 	data map[string]interface{}
+	//
+	queueForCapacity *Queue
 }
 
+type MapConfig struct {
+	Capacity int
+}
+
+type MapOption func(*MapConfig)
+
 // NewMap returns a new safe map
-func NewMap() *Map {
-	return &Map{
+func NewMap(opts ...MapOption) *Map {
+	cfg := &MapConfig{
+		Capacity: 0,
+	}
+	for _, opt := range opts {
+		opt(cfg)
+	}
+
+	m := &Map{
+		cfg:  cfg,
 		data: make(map[string]interface{}),
 	}
+
+	if cfg.Capacity > 0 {
+		m.queueForCapacity = NewQueue()
+	}
+
+	return m
 }
 
 // Set sets a key = value in the map
@@ -22,7 +46,16 @@ func (m *Map) Set(key string, value interface{}) error {
 	m.Lock()
 	defer m.Unlock()
 
+	if m.cfg.Capacity > 0 && m.queueForCapacity.Size() >= m.cfg.Capacity {
+		keyToRemove := m.queueForCapacity.Dequeue().(string)
+		delete(m.data, keyToRemove)
+	}
+
 	m.data[key] = value
+
+	if m.cfg.Capacity > 0 {
+		m.queueForCapacity.Enqueue(key)
+	}
 
 	return nil
 }
