@@ -3,20 +3,20 @@ package safe
 import "sync"
 
 // Queue ...
-type Queue struct {
+type Queue[V any] struct {
 	sync.RWMutex
-	data []interface{}
+	data []V
 }
 
 // NewQueue returns a new safe queue
-func NewQueue() *Queue {
-	return &Queue{
-		data: make([]interface{}, 0),
+func NewQueue[V any]() *Queue[V] {
+	return &Queue[V]{
+		data: make([]V, 0),
 	}
 }
 
 // Enqueue adds an element to the end of the queue
-func (q *Queue) Enqueue(value interface{}) {
+func (q *Queue[V]) Enqueue(value V) {
 	q.Lock()
 	defer q.Unlock()
 
@@ -24,12 +24,13 @@ func (q *Queue) Enqueue(value interface{}) {
 }
 
 // Dequeue removes and returns the first element of the queue
-func (q *Queue) Dequeue() interface{} {
+func (q *Queue[V]) Dequeue() V {
 	q.Lock()
 	defer q.Unlock()
 
 	if len(q.data) == 0 {
-		return nil
+		var v V
+		return v
 	}
 
 	value := q.data[0]
@@ -38,7 +39,7 @@ func (q *Queue) Dequeue() interface{} {
 }
 
 // Size returns the number of elements in the queue
-func (q *Queue) Size() int {
+func (q *Queue[V]) Size() int {
 	q.RLock()
 	defer q.RUnlock()
 
@@ -46,31 +47,33 @@ func (q *Queue) Size() int {
 }
 
 // Front returns the first element of the queue
-func (q *Queue) Front() interface{} {
+func (q *Queue[V]) Front() V {
 	q.RLock()
 	defer q.RUnlock()
 
 	if len(q.data) == 0 {
-		return nil
+		var v V
+		return v
 	}
 
 	return q.data[0]
 }
 
 // Back returns the last element of the queue
-func (q *Queue) Back() interface{} {
+func (q *Queue[V]) Back() V {
 	q.RLock()
 	defer q.RUnlock()
 
 	if len(q.data) == 0 {
-		return nil
+		var v V
+		return v
 	}
 
 	return q.data[len(q.data)-1]
 }
 
 // IsEmpty returns true if the queue is empty
-func (q *Queue) IsEmpty() bool {
+func (q *Queue[V]) IsEmpty() bool {
 	q.RLock()
 	defer q.RUnlock()
 
@@ -78,9 +81,9 @@ func (q *Queue) IsEmpty() bool {
 }
 
 // Clear removes all elements from the queue
-func (q *Queue) Clear() {
+func (q *Queue[V]) Clear() {
 	q.Lock()
 	defer q.Unlock()
 
-	q.data = make([]interface{}, 0)
+	q.data = make([]V, 0)
 }

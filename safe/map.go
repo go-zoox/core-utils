@@ -11,7 +11,7 @@ type Map[K comparable, V any] struct {
 	//
 	data map[K]V
 	//
-	queueForCapacity *Queue
+	queueForCapacity *Queue[K]
 }
 
 // MapConfig ...
@@ -37,7 +37,7 @@ func NewMap[K comparable, V any](opts ...MapOption) *Map[K, V] {
 	}
 
 	if cfg.Capacity > 0 {
-		m.queueForCapacity = NewQueue()
+		m.queueForCapacity = NewQueue[K]()
 	}
 
 	return m
@@ -49,7 +49,7 @@ func (m *Map[K, V]) Set(key K, value V) error {
 	defer m.Unlock()
 
 	if m.cfg.Capacity > 0 && m.queueForCapacity.Size() >= m.cfg.Capacity {
-		keyToRemove := m.queueForCapacity.Dequeue().(K)
+		keyToRemove := m.queueForCapacity.Dequeue()
 		delete(m.data, keyToRemove)
 	}
 
