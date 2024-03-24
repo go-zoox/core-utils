@@ -1,6 +1,9 @@
 package safe
 
-import "sync"
+import (
+	"encoding/json"
+	"sync"
+)
 
 // Queue ...
 type Queue[V any] struct {
@@ -86,4 +89,30 @@ func (q *Queue[V]) Clear() {
 	defer q.Unlock()
 
 	q.data = make([]V, 0)
+}
+
+// String returns a string representation of the queue
+func (q *Queue[V]) String() string {
+	bytes, err := q.MarshalJSON()
+	if err != nil {
+		return err.Error()
+	}
+
+	return string(bytes)
+}
+
+// MarshalJSON returns the JSON encoding of the queue
+func (q *Queue[V]) MarshalJSON() ([]byte, error) {
+	q.RLock()
+	defer q.RUnlock()
+
+	return json.Marshal(q.data)
+}
+
+// UnmarshalJSON decodes the JSON encoding of the queue
+func (q *Queue[V]) UnmarshalJSON(data []byte) error {
+	q.Lock()
+	defer q.Unlock()
+
+	return json.Unmarshal(data, &q.data)
 }

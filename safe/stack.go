@@ -1,6 +1,9 @@
 package safe
 
-import "sync"
+import (
+	"encoding/json"
+	"sync"
+)
 
 // Stack ...
 type Stack[V any] struct {
@@ -70,4 +73,37 @@ func (m *Stack[V]) Peek(key string) V {
 	}
 
 	return m.data[len(m.data)-1]
+}
+
+// String returns a string representation of the stack
+func (m *Stack[V]) String() string {
+	bytes, err := m.MarshalJSON()
+	if err != nil {
+		return err.Error()
+	}
+
+	return string(bytes)
+}
+
+// MarshalJSON returns the JSON encoding of the stack
+func (m *Stack[V]) MarshalJSON() ([]byte, error) {
+	m.RLock()
+	defer m.RUnlock()
+
+	return json.Marshal(m.data)
+}
+
+// UnmarshalJSON decodes the JSON encoding of the stack
+func (m *Stack[V]) UnmarshalJSON(data []byte) error {
+	var values []V
+	if err := json.Unmarshal(data, &values); err != nil {
+		return err
+	}
+
+	m.Lock()
+	defer m.Unlock()
+
+	m.data = values
+
+	return nil
 }

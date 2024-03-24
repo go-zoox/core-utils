@@ -1,6 +1,7 @@
 package safe
 
 import (
+	"encoding/json"
 	"reflect"
 	"sync"
 )
@@ -335,4 +336,30 @@ func (l *List[V]) ToSlice() []V {
 	defer l.RUnlock()
 
 	return l.data
+}
+
+// String returns the string representation of the list
+func (l *List[V]) String() string {
+	bytes, err := l.MarshalJSON()
+	if err != nil {
+		return err.Error()
+	}
+
+	return string(bytes)
+}
+
+// MarshalJSON returns the JSON encoding of the list
+func (l *List[V]) MarshalJSON() ([]byte, error) {
+	l.RLock()
+	defer l.RUnlock()
+
+	return json.Marshal(l.data)
+}
+
+// UnmarshalJSON parses the JSON-encoded data and stores the result in the list
+func (l *List[V]) UnmarshalJSON(data []byte) error {
+	l.Lock()
+	defer l.Unlock()
+
+	return json.Unmarshal(data, &l.data)
 }

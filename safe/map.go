@@ -1,6 +1,7 @@
 package safe
 
 import (
+	"encoding/json"
 	"sync"
 )
 
@@ -133,4 +134,30 @@ func (m *Map[K, V]) ToMap() map[K]V {
 	defer m.RUnlock()
 
 	return m.data
+}
+
+// String returns the string representation of the map
+func (m *Map[K, V]) String() string {
+	bytes, err := m.MarshalJSON()
+	if err != nil {
+		return err.Error()
+	}
+
+	return string(bytes)
+}
+
+// MarshalJSON returns the JSON encoding of the map
+func (m *Map[K, V]) MarshalJSON() ([]byte, error) {
+	m.RLock()
+	defer m.RUnlock()
+
+	return json.Marshal(m.data)
+}
+
+// UnmarshalJSON decodes the JSON encoding of the map
+func (m *Map[K, V]) UnmarshalJSON(data []byte) error {
+	m.Lock()
+	defer m.Unlock()
+
+	return json.Unmarshal(data, &m.data)
 }
