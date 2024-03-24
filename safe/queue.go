@@ -9,11 +9,29 @@ import (
 type Queue[V any] struct {
 	sync.RWMutex
 	data []V
+	//
+	cfg *QueueConfig
 }
 
+// QueueConfig ...
+type QueueConfig struct {
+	Capacity int
+}
+
+// QueueOption ...
+type QueueOption func(*QueueConfig)
+
 // NewQueue returns a new safe queue
-func NewQueue[V any]() *Queue[V] {
+func NewQueue[V any](opts ...QueueOption) *Queue[V] {
+	cfg := &QueueConfig{
+		Capacity: 0,
+	}
+	for _, opt := range opts {
+		opt(cfg)
+	}
+
 	return &Queue[V]{
+		cfg:  cfg,
 		data: make([]V, 0),
 	}
 }
@@ -23,7 +41,12 @@ func (q *Queue[V]) Enqueue(value V) {
 	q.Lock()
 	defer q.Unlock()
 
-	q.data = append(q.data, value)
+	q.data = append([]V{value}, q.data...)
+
+	// check capacity when push
+	if q.cfg.Capacity > 0 && len(q.data) > q.cfg.Capacity {
+		q.data = q.data[len(q.data)-q.cfg.Capacity:]
+	}
 }
 
 // Dequeue removes and returns the first element of the queue
