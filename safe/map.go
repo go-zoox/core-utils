@@ -14,10 +14,12 @@ type Map struct {
 	queueForCapacity *Queue
 }
 
+// MapConfig ...
 type MapConfig struct {
 	Capacity int
 }
 
+// MapOption ...
 type MapOption func(*MapConfig)
 
 // NewMap returns a new safe map

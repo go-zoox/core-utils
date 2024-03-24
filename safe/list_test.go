@@ -72,7 +72,9 @@ func TestSafeList(t *testing.T) {
 
 func TestListCapacity(t *testing.T) {
 	capacity := 3
-	l := NewList(capacity)
+	l := NewList(func(lc *ListConfig) {
+		lc.Capacity = capacity
+	})
 	l.Push(1)
 	l.Push(2)
 	l.Push(3)

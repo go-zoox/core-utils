@@ -7,20 +7,31 @@ import (
 // List ...
 type List struct {
 	sync.RWMutex
-	data     []interface{}
-	capacity int
+	data []interface{}
+	//
+	cfg *ListConfig
 }
 
+// ListConfig ...
+type ListConfig struct {
+	Capacity int
+}
+
+// ListOption ...
+type ListOption func(*ListConfig)
+
 // NewList returns a new safe list
-func NewList(capacity ...int) *List {
-	capacityX := 0
-	if len(capacity) > 0 && capacity[0] > 0 {
-		capacityX = capacity[0]
+func NewList(opts ...ListOption) *List {
+	cfg := &ListConfig{
+		Capacity: 0,
+	}
+	for _, opt := range opts {
+		opt(cfg)
 	}
 
 	return &List{
-		data:     make([]interface{}, 0),
-		capacity: capacityX,
+		cfg:  cfg,
+		data: make([]interface{}, 0),
 	}
 }
 
@@ -32,8 +43,8 @@ func (l *List) Push(value interface{}) {
 	l.data = append(l.data, value)
 
 	// check capacity when push
-	if l.capacity > 0 && len(l.data) > l.capacity {
-		l.data = l.data[len(l.data)-l.capacity:]
+	if l.cfg.Capacity > 0 && len(l.data) > l.cfg.Capacity {
+		l.data = l.data[len(l.data)-l.cfg.Capacity:]
 	}
 }
 
@@ -209,8 +220,8 @@ func (l *List) Unshift(value interface{}) {
 	l.data = append([]interface{}{value}, l.data...)
 
 	// check capacity when push
-	if l.capacity > 0 && len(l.data) > l.capacity {
-		l.data = l.data[:l.capacity]
+	if l.cfg.Capacity > 0 && len(l.data) > l.cfg.Capacity {
+		l.data = l.data[:l.cfg.Capacity]
 	}
 }
 
