@@ -41,7 +41,7 @@ func (q *Queue[V]) Enqueue(value V) {
 	q.Lock()
 	defer q.Unlock()
 
-	q.data = append([]V{value}, q.data...)
+	q.data = append(q.data, value)
 
 	// check capacity when push
 	if q.cfg.Capacity > 0 && len(q.data) > q.cfg.Capacity {

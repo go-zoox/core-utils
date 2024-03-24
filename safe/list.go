@@ -52,6 +52,19 @@ func (l *List[V]) Push(value V) {
 	}
 }
 
+// LPush adds an element to the beginning of the list
+func (l *List[V]) LPush(value V) {
+	l.Lock()
+	defer l.Unlock()
+
+	l.data = append([]V{value}, l.data...)
+
+	// check capacity when push
+	if l.cfg.Capacity > 0 && len(l.data) > l.cfg.Capacity {
+		l.data = l.data[:l.cfg.Capacity]
+	}
+}
+
 // Pop removes and returns the last element of the list
 func (l *List[V]) Pop() V {
 	l.Lock()
@@ -64,6 +77,21 @@ func (l *List[V]) Pop() V {
 
 	value := l.data[len(l.data)-1]
 	l.data = l.data[:len(l.data)-1]
+	return value
+}
+
+// LPop removes and returns the first element of the list
+func (l *List[V]) LPop() V {
+	l.Lock()
+	defer l.Unlock()
+
+	if len(l.data) == 0 {
+		var v V
+		return v
+	}
+
+	value := l.data[0]
+	l.data = l.data[1:]
 	return value
 }
 
@@ -239,21 +267,6 @@ func (l *List[V]) Unshift(value V) {
 	}
 }
 
-// Shift removes and returns the first element of the list
-func (l *List[V]) Shift() V {
-	l.Lock()
-	defer l.Unlock()
-
-	if len(l.data) == 0 {
-		var v V
-		return v
-	}
-
-	value := l.data[0]
-	l.data = l.data[1:]
-	return value
-}
-
 // Reverse reverses the list
 func (l *List[V]) Reverse() *List[V] {
 	l.Lock()
@@ -362,4 +375,18 @@ func (l *List[V]) UnmarshalJSON(data []byte) error {
 	defer l.Unlock()
 
 	return json.Unmarshal(data, &l.data)
+}
+
+// Unshift adds an element to the beginning of the list
+//
+//	like JavaScript Array.unshift
+func (l *List[V]) Unshifts(values V) {
+	l.LPush(values)
+}
+
+// Shift removes and returns the first element of the list
+//
+//	like JavaScript Array.shift
+func (l *List[V]) Shift() V {
+	return l.LPop()
 }

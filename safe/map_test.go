@@ -68,7 +68,7 @@ func TestSafeMapWithCapacity(t *testing.T) {
 
 	m.Set("c", 3)
 	if ok := m.Has("a"); ok {
-		t.Errorf("Expected not has key a, got %v", ok)
+		t.Errorf("Expected not has key a, but got")
 	}
 	if v := m.Get("a"); v != nil {
 		t.Errorf("Expected nil, got %v", v)
