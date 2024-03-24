@@ -1,13 +1,14 @@
 package safe
 
 import (
+	"reflect"
 	"sync"
 )
 
 // List ...
-type List struct {
+type List[V any] struct {
 	sync.RWMutex
-	data []interface{}
+	data []V
 	//
 	cfg *ListConfig
 }
@@ -21,7 +22,9 @@ type ListConfig struct {
 type ListOption func(*ListConfig)
 
 // NewList returns a new safe list
-func NewList(opts ...ListOption) *List {
+//
+// @TODO generic type comparable interface cannot implement by struct，so we use any type for generic type
+func NewList[V any](opts ...ListOption) *List[V] {
 	cfg := &ListConfig{
 		Capacity: 0,
 	}
@@ -29,14 +32,14 @@ func NewList(opts ...ListOption) *List {
 		opt(cfg)
 	}
 
-	return &List{
+	return &List[V]{
 		cfg:  cfg,
-		data: make([]interface{}, 0),
+		data: make([]V, 0),
 	}
 }
 
 // Push adds an element to the end of the list
-func (l *List) Push(value interface{}) {
+func (l *List[V]) Push(value V) {
 	l.Lock()
 	defer l.Unlock()
 
@@ -49,12 +52,13 @@ func (l *List) Push(value interface{}) {
 }
 
 // Pop removes and returns the last element of the list
-func (l *List) Pop() interface{} {
+func (l *List[V]) Pop() V {
 	l.Lock()
 	defer l.Unlock()
 
 	if len(l.data) == 0 {
-		return nil
+		var v V
+		return v
 	}
 
 	value := l.data[len(l.data)-1]
@@ -63,7 +67,7 @@ func (l *List) Pop() interface{} {
 }
 
 // Size returns the number of elements in the list
-func (l *List) Size() int {
+func (l *List[V]) Size() int {
 	l.RLock()
 	defer l.RUnlock()
 
@@ -71,32 +75,33 @@ func (l *List) Size() int {
 }
 
 // Length is an alias of Size
-func (l *List) Length() int {
+func (l *List[V]) Length() int {
 	return l.Size()
 }
 
 // Clear removes all elements from the list
-func (l *List) Clear() {
+func (l *List[V]) Clear() {
 	l.Lock()
 	defer l.Unlock()
 
-	l.data = make([]interface{}, 0)
+	l.data = make([]V, 0)
 }
 
 // Get returns the element at the given index
-func (l *List) Get(index int) interface{} {
+func (l *List[V]) Get(index int) V {
 	l.RLock()
 	defer l.RUnlock()
 
 	if index < 0 || index >= len(l.data) {
-		return nil
+		var v V
+		return v
 	}
 
 	return l.data[index]
 }
 
 // ForEach iterates over the list and calls the given function for each element
-func (l *List) ForEach(f func(interface{}) (stop bool)) {
+func (l *List[V]) ForEach(f func(V) (stop bool)) {
 	l.RLock()
 	defer l.RUnlock()
 
@@ -108,11 +113,11 @@ func (l *List) ForEach(f func(interface{}) (stop bool)) {
 }
 
 // Filter returns a new list with all elements that satisfy the given function
-func (l *List) Filter(f func(interface{}) bool) *List {
+func (l *List[V]) Filter(f func(V) bool) *List[V] {
 	l.RLock()
 	defer l.RUnlock()
 
-	newList := NewList()
+	newList := NewList[V]()
 	for _, value := range l.data {
 		if f(value) {
 			newList.Push(value)
@@ -123,12 +128,13 @@ func (l *List) Filter(f func(interface{}) bool) *List {
 }
 
 // Reduce returns the result of reducing the list to a single value
-func (l *List) Reduce(f func(interface{}, interface{}) interface{}) interface{} {
+func (l *List[V]) Reduce(f func(V, V) V) V {
 	l.RLock()
 	defer l.RUnlock()
 
 	if len(l.data) == 0 {
-		return nil
+		var v V
+		return v
 	}
 
 	result := l.data[0]
@@ -140,11 +146,11 @@ func (l *List) Reduce(f func(interface{}, interface{}) interface{}) interface{} 
 }
 
 // Map returns a new list with the result of calling the given function on each element
-func (l *List) Map(f func(interface{}) interface{}) *List {
+func (l *List[V]) Map(f func(V) V) *List[V] {
 	l.RLock()
 	defer l.RUnlock()
 
-	newList := NewList()
+	newList := NewList[V]()
 	for _, value := range l.data {
 		newList.Push(f(value))
 	}
@@ -153,12 +159,16 @@ func (l *List) Map(f func(interface{}) interface{}) *List {
 }
 
 // IndexOf returns the index of the given element
-func (l *List) IndexOf(value interface{}) int {
+func (l *List[V]) IndexOf(value V) int {
 	l.RLock()
 	defer l.RUnlock()
 
 	for i, v := range l.data {
-		if v == value {
+		// @TODO
+		// if v == value {
+		// 	return i
+		// }
+		if reflect.DeepEqual(v, value) {
 			return i
 		}
 	}
@@ -167,7 +177,7 @@ func (l *List) IndexOf(value interface{}) int {
 }
 
 // Find returns the first element that satisfies the given function
-func (l *List) Find(f func(interface{}) bool) interface{} {
+func (l *List[V]) Find(f func(V) bool) V {
 	l.RLock()
 	defer l.RUnlock()
 
@@ -177,11 +187,12 @@ func (l *List) Find(f func(interface{}) bool) interface{} {
 		}
 	}
 
-	return nil
+	var v V
+	return v
 }
 
 // Contains returns true if the list contains the given element
-func (l *List) Contains(value interface{}) bool {
+func (l *List[V]) Contains(value V) bool {
 	l.RLock()
 	defer l.RUnlock()
 
@@ -189,35 +200,37 @@ func (l *List) Contains(value interface{}) bool {
 }
 
 // First returns the first element of the list
-func (l *List) First() interface{} {
+func (l *List[V]) First() V {
 	l.RLock()
 	defer l.RUnlock()
 
 	if len(l.data) == 0 {
-		return nil
+		var v V
+		return v
 	}
 
 	return l.data[0]
 }
 
 // Last returns the last element of the list
-func (l *List) Last() interface{} {
+func (l *List[V]) Last() V {
 	l.RLock()
 	defer l.RUnlock()
 
 	if len(l.data) == 0 {
-		return nil
+		var v V
+		return v
 	}
 
 	return l.data[len(l.data)-1]
 }
 
 // Unshift adds an element to the beginning of the list
-func (l *List) Unshift(value interface{}) {
+func (l *List[V]) Unshift(value V) {
 	l.Lock()
 	defer l.Unlock()
 
-	l.data = append([]interface{}{value}, l.data...)
+	l.data = append([]V{value}, l.data...)
 
 	// check capacity when push
 	if l.cfg.Capacity > 0 && len(l.data) > l.cfg.Capacity {
@@ -226,12 +239,13 @@ func (l *List) Unshift(value interface{}) {
 }
 
 // Shift removes and returns the first element of the list
-func (l *List) Shift() interface{} {
+func (l *List[V]) Shift() V {
 	l.Lock()
 	defer l.Unlock()
 
 	if len(l.data) == 0 {
-		return nil
+		var v V
+		return v
 	}
 
 	value := l.data[0]
@@ -240,11 +254,11 @@ func (l *List) Shift() interface{} {
 }
 
 // Reverse reverses the list
-func (l *List) Reverse() *List {
+func (l *List[V]) Reverse() *List[V] {
 	l.Lock()
 	defer l.Unlock()
 
-	newList := NewList()
+	newList := NewList[V]()
 	for i := len(l.data) - 1; i >= 0; i-- {
 		newList.Push(l.data[i])
 	}
@@ -252,7 +266,7 @@ func (l *List) Reverse() *List {
 }
 
 // Splice removes the given number of elements from the given index
-func (l *List) Splice(index int, count int) *List {
+func (l *List[V]) Splice(index int, count int) *List[V] {
 	l.Lock()
 	defer l.Unlock()
 
@@ -264,7 +278,7 @@ func (l *List) Splice(index int, count int) *List {
 		count = len(l.data) - index
 	}
 
-	newList := NewList()
+	newList := NewList[V]()
 	for i := 0; i < count; i++ {
 		newList.Push(l.data[index+i])
 	}
@@ -274,7 +288,7 @@ func (l *List) Splice(index int, count int) *List {
 }
 
 // Slice returns a new list with a copy of a given number of elements from the given index
-func (l *List) Slice(start int, end int) *List {
+func (l *List[V]) Slice(start int, end int) *List[V] {
 	l.RLock()
 	defer l.RUnlock()
 
@@ -290,7 +304,7 @@ func (l *List) Slice(start int, end int) *List {
 		start, end = end, start
 	}
 
-	newList := NewList()
+	newList := NewList[V]()
 	for i := start; i < end; i++ {
 		newList.Push(l.data[i])
 	}
@@ -299,7 +313,7 @@ func (l *List) Slice(start int, end int) *List {
 }
 
 // Swap swaps the elements at the given indices
-func (l *List) Swap(index1 int, index2 int) {
+func (l *List[V]) Swap(index1 int, index2 int) {
 	l.Lock()
 	defer l.Unlock()
 
@@ -311,12 +325,12 @@ func (l *List) Swap(index1 int, index2 int) {
 }
 
 // Iterator returns a channel that will yield successive elements of the list
-func (l *List) Iterator() []interface{} {
+func (l *List[V]) Iterator() []V {
 	return l.ToSlice()
 }
 
 // ToSlice returns the origin map
-func (l *List) ToSlice() []interface{} {
+func (l *List[V]) ToSlice() []V {
 	l.RLock()
 	defer l.RUnlock()
 

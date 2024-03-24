@@ -3,7 +3,7 @@ package safe
 import "testing"
 
 func TestSafeList(t *testing.T) {
-	list := NewList()
+	list := NewList[int]()
 	list.Push(1)
 	list.Push(2)
 	list.Push(3)
@@ -62,17 +62,17 @@ func TestSafeList(t *testing.T) {
 		t.Errorf("Expected 4, got %v", v)
 	}
 
-	x := list.Reduce(func(all interface{}, v interface{}) interface{} {
-		return all.(int) + v.(int)
+	x := list.Reduce(func(all int, v int) int {
+		return all + v
 	})
-	if x.(int) != 8 {
+	if x != 8 {
 		t.Errorf("Expected 8, got %v", x)
 	}
 }
 
 func TestListCapacity(t *testing.T) {
 	capacity := 3
-	l := NewList(func(lc *ListConfig) {
+	l := NewList[int](func(lc *ListConfig) {
 		lc.Capacity = capacity
 	})
 	l.Push(1)
@@ -141,5 +141,35 @@ func TestListCapacity(t *testing.T) {
 	}
 	if l.data[0] != 3 {
 		t.Fatalf("expected 3, got %v", l.data[0])
+	}
+}
+
+func TestListWithCustomTypeComparable(t *testing.T) {
+	type Obj struct {
+		Attr string
+		A    interface{}
+	}
+
+	// func (o *Obj) IsEqual(other *Obj) int {
+	// 	return 0
+	// }
+
+	list := NewList[Obj]()
+
+	v := Obj{Attr: "123"}
+	v1 := Obj{Attr: "456"}
+	list.Push(v)
+	list.Push(v1)
+
+	if list.Size() != 2 {
+		t.Errorf("Expected 1, got %v", list.Size())
+	}
+
+	if list.IndexOf(v) != 0 {
+		t.Errorf("Expected 0, got %v", list.IndexOf(v))
+	}
+
+	if list.IndexOf(v1) != 1 {
+		t.Errorf("Expected 1, got %v", list.IndexOf(v1))
 	}
 }
