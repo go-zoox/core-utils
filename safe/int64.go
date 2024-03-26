@@ -1,6 +1,11 @@
 package safe
 
-import "sync"
+import (
+	"encoding/json"
+	"sync"
+
+	"github.com/go-zoox/core-utils/cast"
+)
 
 // Int64 ...
 type Int64 struct {
@@ -43,4 +48,28 @@ func (i *Int64) Dec(step int64) {
 	defer i.Unlock()
 
 	i.data -= step
+}
+
+// String returns the string representation of the int
+func (i *Int64) String() string {
+	i.RLock()
+	defer i.RUnlock()
+
+	return cast.ToString(i.data)
+}
+
+// MarshalJSON returns the JSON encoding of the int
+func (i *Int64) MarshalJSON() ([]byte, error) {
+	i.RLock()
+	defer i.RUnlock()
+
+	return json.Marshal(i.data)
+}
+
+// UnmarshalJSON decodes the JSON-encoded data and stores the result in the int
+func (i *Int64) UnmarshalJSON(data []byte) error {
+	i.Lock()
+	defer i.Unlock()
+
+	return json.Unmarshal(data, &i.data)
 }

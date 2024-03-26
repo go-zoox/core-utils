@@ -1,35 +1,62 @@
 package safe
 
-import "sync"
+import (
+	"encoding/json"
+	"sync"
+)
 
 // Queue ...
-type Queue struct {
+type Queue[V any] struct {
 	sync.RWMutex
-	data []interface{}
+	data []V
+	//
+	cfg *QueueConfig
 }
 
+// QueueConfig ...
+type QueueConfig struct {
+	Capacity int
+}
+
+// QueueOption ...
+type QueueOption func(*QueueConfig)
+
 // NewQueue returns a new safe queue
-func NewQueue() *Queue {
-	return &Queue{
-		data: make([]interface{}, 0),
+func NewQueue[V any](opts ...QueueOption) *Queue[V] {
+	cfg := &QueueConfig{
+		Capacity: 0,
+	}
+	for _, opt := range opts {
+		opt(cfg)
+	}
+
+	return &Queue[V]{
+		cfg:  cfg,
+		data: make([]V, 0),
 	}
 }
 
 // Enqueue adds an element to the end of the queue
-func (q *Queue) Enqueue(value interface{}) {
+func (q *Queue[V]) Enqueue(value V) {
 	q.Lock()
 	defer q.Unlock()
 
 	q.data = append(q.data, value)
+
+	// check capacity when push
+	if q.cfg.Capacity > 0 && len(q.data) > q.cfg.Capacity {
+		q.data = q.data[len(q.data)-q.cfg.Capacity:]
+	}
 }
 
 // Dequeue removes and returns the first element of the queue
-func (q *Queue) Dequeue() interface{} {
+func (q *Queue[V]) Dequeue() V {
 	q.Lock()
 	defer q.Unlock()
 
 	if len(q.data) == 0 {
-		return nil
+		var v V
+		return v
 	}
 
 	value := q.data[0]
@@ -38,7 +65,7 @@ func (q *Queue) Dequeue() interface{} {
 }
 
 // Size returns the number of elements in the queue
-func (q *Queue) Size() int {
+func (q *Queue[V]) Size() int {
 	q.RLock()
 	defer q.RUnlock()
 
@@ -46,31 +73,33 @@ func (q *Queue) Size() int {
 }
 
 // Front returns the first element of the queue
-func (q *Queue) Front() interface{} {
+func (q *Queue[V]) Front() V {
 	q.RLock()
 	defer q.RUnlock()
 
 	if len(q.data) == 0 {
-		return nil
+		var v V
+		return v
 	}
 
 	return q.data[0]
 }
 
 // Back returns the last element of the queue
-func (q *Queue) Back() interface{} {
+func (q *Queue[V]) Back() V {
 	q.RLock()
 	defer q.RUnlock()
 
 	if len(q.data) == 0 {
-		return nil
+		var v V
+		return v
 	}
 
 	return q.data[len(q.data)-1]
 }
 
 // IsEmpty returns true if the queue is empty
-func (q *Queue) IsEmpty() bool {
+func (q *Queue[V]) IsEmpty() bool {
 	q.RLock()
 	defer q.RUnlock()
 
@@ -78,9 +107,35 @@ func (q *Queue) IsEmpty() bool {
 }
 
 // Clear removes all elements from the queue
-func (q *Queue) Clear() {
+func (q *Queue[V]) Clear() {
 	q.Lock()
 	defer q.Unlock()
 
-	q.data = make([]interface{}, 0)
+	q.data = make([]V, 0)
+}
+
+// String returns a string representation of the queue
+func (q *Queue[V]) String() string {
+	bytes, err := q.MarshalJSON()
+	if err != nil {
+		return err.Error()
+	}
+
+	return string(bytes)
+}
+
+// MarshalJSON returns the JSON encoding of the queue
+func (q *Queue[V]) MarshalJSON() ([]byte, error) {
+	q.RLock()
+	defer q.RUnlock()
+
+	return json.Marshal(q.data)
+}
+
+// UnmarshalJSON decodes the JSON encoding of the queue
+func (q *Queue[V]) UnmarshalJSON(data []byte) error {
+	q.Lock()
+	defer q.Unlock()
+
+	return json.Unmarshal(data, &q.data)
 }
