@@ -75,6 +75,32 @@ func (m *Stack[V]) Peek(key string) V {
 	return m.data[len(m.data)-1]
 }
 
+// ForEach iterates over the stack, calling the given function for each element from top to bottom
+func (m *Stack[V]) ForEach(key string, fn func(value V, index int) (stop bool)) {
+	m.RLock()
+	defer m.RUnlock()
+
+	for i, value := range m.data {
+		if stop := fn(value, i); stop {
+			break
+		}
+	}
+}
+
+// ForEachReverse iterates over the stack, calling the given function for each element from bottom to top
+func (m *Stack[V]) ForEachReverse(key string, fn func(value V, index int) (stop bool)) {
+	m.RLock()
+	defer m.RUnlock()
+
+	j := 0
+	for i := len(m.data) - 1; i >= 0; i-- {
+		if stop := fn(m.data[i], j); stop {
+			break
+		}
+		j++
+	}
+}
+
 // String returns a string representation of the stack
 func (m *Stack[V]) String() string {
 	bytes, err := m.MarshalJSON()

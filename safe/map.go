@@ -123,6 +123,18 @@ func (m *Map[K, V]) Clear() error {
 	return nil
 }
 
+// ForEach iterates over the map and calls the given function for each key and value
+func (m *Map[K, V]) ForEach(f func(K, V) (stop bool)) {
+	m.RLock()
+	defer m.RUnlock()
+
+	for key, value := range m.data {
+		if stop := f(key, value); stop {
+			break
+		}
+	}
+}
+
 // Iterator returns a channel that will yield all the keys and values in the map
 func (m *Map[K, V]) Iterator() map[K]V {
 	return m.ToMap()

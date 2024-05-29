@@ -114,6 +114,32 @@ func (q *Queue[V]) Clear() {
 	q.data = make([]V, 0)
 }
 
+// ForEach iterates over the queue and calls the given function for each element from front to back
+func (q *Queue[V]) ForEach(fn func(value V, index int) (stop bool)) {
+	q.RLock()
+	defer q.RUnlock()
+
+	for i, value := range q.data {
+		if stop := fn(value, i); stop {
+			break
+		}
+	}
+}
+
+// ForEachReverse iterates over the queue and calls the given function for each element from back to front
+func (q *Queue[V]) ForEachReverse(fn func(value V, index int) (stop bool)) {
+	q.RLock()
+	defer q.RUnlock()
+
+	j := 0
+	for i := len(q.data) - 1; i >= 0; i-- {
+		if stop := fn(q.data[i], j); stop {
+			break
+		}
+		j++
+	}
+}
+
 // String returns a string representation of the queue
 func (q *Queue[V]) String() string {
 	bytes, err := q.MarshalJSON()
