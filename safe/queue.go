@@ -165,3 +165,11 @@ func (q *Queue[V]) UnmarshalJSON(data []byte) error {
 
 	return json.Unmarshal(data, &q.data)
 }
+
+// ToSlice returns the origin queue
+func (q *Queue[V]) ToSlice() []V {
+	q.RLock()
+	defer q.RUnlock()
+
+	return q.data
+}

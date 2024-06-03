@@ -133,3 +133,11 @@ func (m *Stack[V]) UnmarshalJSON(data []byte) error {
 
 	return nil
 }
+
+// ToSlice returns the origin stack
+func (m *Stack[V]) ToSlice(key string) []V {
+	m.RLock()
+	defer m.RUnlock()
+
+	return m.data
+}
